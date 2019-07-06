@@ -1,7 +1,6 @@
 import pako from 'pako';
 
-import axios from 'axios';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
@@ -29,14 +28,13 @@ function load() {
             return
         }
 
-        let requestConfig = {
+        let requestConfig: AxiosRequestConfig = {
             responseType: 'arraybuffer'
         }
-
         axios.all([
             axios.get(`https://maven.fabricmc.net/net/fabricmc/yarn/${versions[0]}/yarn-${versions[0]}-tiny.gz`, requestConfig),
             axios.get(`https://maven.fabricmc.net/net/fabricmc/yarn/${versions[1]}/yarn-${versions[1]}-tiny.gz`, requestConfig)
-        ]).then(axios.spread((sourceInput : AxiosResponse, targetInput: AxiosResponse) => {
+        ]).then(axios.spread((sourceInput: AxiosResponse, targetInput: AxiosResponse) => {
             let source = tiny.parseTiny(extract(sourceInput.data))
             let target = tiny.parseTiny(extract(targetInput.data))
 
@@ -48,20 +46,20 @@ function load() {
     }
 }
 
-function setMessage(text) {
+function setMessage(text: string) {
     getElement("classes").innerText = text
     getElement("methods").innerText = text
     getElement("fields").innerText = text
 }
 
 function populateVersions() {
-    let addToList = function (id : string, value : string) {
+    let addToList = function (id: string, value: string) {
         var option = document.createElement("option")
         option.text = value
         getList(id).add(option)
     }
 
-    axios.get("https://meta.fabricmc.net/v2/versions/yarn").then(function (res : AxiosResponse) {
+    axios.get("https://meta.fabricmc.net/v2/versions/yarn").then(function (res: AxiosResponse) {
         let json = res.data
         for (let i = 0; i < json.length; i++) {
             addToList("source", json[i].version)
@@ -94,7 +92,7 @@ function diffMappings(source: Mappings, target: Mappings) {
     printDiff(diffMemberArray(source.fields, target), "fields")
 }
 
-function printDiff(diff, elementID) {
+function printDiff(diff, elementID: string) {
     document.getElementById(elementID).innerText = diff.map(value => `${value.source} -> ${value.target}`).join("\n")
 }
 
@@ -121,8 +119,8 @@ function extract(input) {
 }
 
 //Thanks https://stackoverflow.com/questions/486896/adding-a-parameter-to-the-url-with-javascript
-function insertParam(key : string, value : string) {
-    key = encodeURI(key) 
+function insertParam(key: string, value: string) {
+    key = encodeURI(key)
     value = encodeURI(value)
 
     var kvp = document.location.search.substr(1).split('&')
@@ -143,11 +141,11 @@ function insertParam(key : string, value : string) {
     document.location.search = kvp.join('&')
 }
 
-function getElement(name: string) : HTMLInputElement {
+function getElement(name: string): HTMLInputElement {
     return (document.getElementById(name) as HTMLInputElement)
 }
 
-function getList(name: string) : HTMLSelectElement {
+function getList(name: string): HTMLSelectElement {
     return (document.getElementById(name) as HTMLSelectElement)
 }
 
