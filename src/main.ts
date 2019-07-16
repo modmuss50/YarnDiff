@@ -1,12 +1,15 @@
-import pako from 'pako';
+import pako from 'pako'
 
-import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
-import { Mapping, Mappings } from './tiny_mappings';
-import * as tiny from "./tiny_mappings";
+import { Mapping, Mappings } from './tiny_mappings'
+import * as tiny from "./tiny_mappings"
+
+var sourceMappings : Mappings
+var targetMappings : Mappings
 
 function load() {
     //Sets up the progres bar
@@ -35,10 +38,10 @@ function load() {
             axios.get(`https://maven.fabricmc.net/net/fabricmc/yarn/${versions[0]}/yarn-${versions[0]}-tiny.gz`, requestConfig),
             axios.get(`https://maven.fabricmc.net/net/fabricmc/yarn/${versions[1]}/yarn-${versions[1]}-tiny.gz`, requestConfig)
         ]).then(axios.spread((sourceInput: AxiosResponse, targetInput: AxiosResponse) => {
-            let source = tiny.parseTiny(extract(sourceInput.data))
-            let target = tiny.parseTiny(extract(targetInput.data))
+            sourceMappings = tiny.parseTiny(extract(sourceInput.data))
+            targetMappings = tiny.parseTiny(extract(targetInput.data))
 
-            diffMappings(source, target)
+            diffMappings(sourceMappings, targetMappings)
         }))
 
     } else {
@@ -84,6 +87,24 @@ function updateVersions() {
     let targetVersion = getElement("target").value
 
     insertParam("version", `${sourceVersion.replace("+", "PLUS")},${targetVersion.replace("+", "PLUS")}`)
+}
+
+function generateMigrationMap(){
+    let diff = diffMemberArray(sourceMappings.classes, targetMappings)
+
+    var xml = document.implementation.createDocument("", "", null)
+    var migrationMap = xml.createElement("migrationMap")
+    xml.appendChild(migrationMap)
+
+    migrationMap.appendChild
+
+    diff.forEach(source => {
+        let target = targetMappings.find(source.intermediary)
+
+        if (target !== undefined && source.yarn !== target.yarn) {
+
+        }
+    })
 }
 
 function diffMappings(source: Mappings, target: Mappings) {
