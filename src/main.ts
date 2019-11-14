@@ -2,9 +2,6 @@ import pako from 'pako'
 
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 
-import { loadProgressBar } from 'axios-progress-bar'
-import 'axios-progress-bar/dist/nprogress.css'
-
 import { Mapping, Mappings } from './tiny_mappings'
 import * as tiny from "./tiny_mappings"
 
@@ -12,8 +9,6 @@ var sourceMappings : Mappings
 var targetMappings : Mappings
 
 function load() {
-    //Sets up the progres bar
-    loadProgressBar()
 
     populateVersions()
 
@@ -34,9 +29,10 @@ function load() {
         let requestConfig: AxiosRequestConfig = {
             responseType: 'arraybuffer'
         }
+
         axios.all([
-            axios.get(`https://maven.fabricmc.net/net/fabricmc/yarn/${versions[0]}/yarn-${versions[0]}-tiny.gz`, requestConfig),
-            axios.get(`https://maven.fabricmc.net/net/fabricmc/yarn/${versions[1]}/yarn-${versions[1]}-tiny.gz`, requestConfig)
+            axios.get(`https://maven.modmuss50.me/net/fabricmc/yarn/${versions[0]}/yarn-${versions[0]}-tiny.gz`, requestConfig),
+            axios.get(`https://maven.modmuss50.me/net/fabricmc/yarn/${versions[1]}/yarn-${versions[1]}-tiny.gz`, requestConfig)
         ]).then(axios.spread((sourceInput: AxiosResponse, targetInput: AxiosResponse) => {
             sourceMappings = tiny.parseTiny(extract(sourceInput.data))
             targetMappings = tiny.parseTiny(extract(targetInput.data))
