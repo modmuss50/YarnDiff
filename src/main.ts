@@ -20,7 +20,6 @@ function load() {
 
         console.log(versions);
 
-
         if (versions[0] === versions[1]) {
             setMessage("Same version selected")
             return
@@ -113,10 +112,10 @@ function printDiff(diff, elementID: string) {
     document.getElementById(elementID).innerText = diff.map(value => `${value.source} -> ${value.target}`).join("\n")
 }
 
-function diffMemberArray(sourceArr: Mapping[], targetMappings: Mappings) {
+function diffMemberArray(source: Map<string, Mapping>, targetMappings: Mappings) {
     let diff = []
 
-    sourceArr.forEach(source => {
+    source.forEach(source => {
         let target = targetMappings.find(source.intermediary)
 
         if (target !== undefined && source.yarn !== target.yarn) {
