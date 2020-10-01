@@ -5,8 +5,8 @@ import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { Mapping, Mappings } from './tiny_mappings'
 import * as tiny from "./tiny_mappings"
 
-var sourceMappings : Mappings
-var targetMappings : Mappings
+let sourceMappings : Mappings
+let targetMappings : Mappings
 
 function load() {
 
@@ -130,7 +130,7 @@ function diffMemberArray(source: Map<string, Mapping>, targetMappings: Mappings)
 
 
 function extract(input) {
-    var byteArray = new Uint8Array(input)
+    const byteArray = new Uint8Array(input)
     return pako.inflate(byteArray, { to: 'string' })
 }
 
@@ -139,9 +139,9 @@ function insertParam(key: string, value: string) {
     key = encodeURI(key)
     value = encodeURI(value)
 
-    var kvp = document.location.search.substr(1).split('&')
+    const kvp = document.location.search.substr(1).split('&')
 
-    var i = kvp.length; var x; while (i--) {
+    let i = kvp.length; var x; while (i--) {
         x = kvp[i].split('=')
 
         if (x[0] == key) {
