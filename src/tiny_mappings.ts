@@ -2,57 +2,41 @@ export class Mapping {
     intermediary: string
     yarn: string
 
-	constructor(intermediary: string, yarn: string) {
+    constructor(intermediary: string, yarn: string) {
         this.intermediary = intermediary;
         this.yarn = yarn;
-	}
+    }
    
 }
 
 export class Mappings {
-    classes: Mapping[] = []
-    fields: Mapping[] = []
-    methods: Mapping[] = []
+    classes: Map<string, Mapping>
+    fields: Map<string, Mapping>
+    methods: Map<string, Mapping>
 
-
-    findClass(name: string) {
-        for (let i = 0; i < this.classes.length; i++) {
-            if (this.classes[i].intermediary === name) {
-                return this.classes[i]
-            }
-        }
-    }
-
-    findMethod(name: string) {
-        for (let i = 0; i < this.methods.length; i++) {
-            if (this.methods[i].intermediary === name) {
-                return this.methods[i]
-            }
-        }
-    }
-
-    findField(name: string) {
-        for (let i = 0; i < this.fields.length; i++) {
-            if (this.fields[i].intermediary === name) {
-                return this.fields[i]
-            }
-        }
+    constructor() {
+        this.classes = new Map<string, Mapping>();
+        this.fields = new Map<string, Mapping>();
+        this.methods = new Map<string, Mapping>();
     }
 
     find(name: string) {
-        let type = name.split("_")[0].split("/").pop()
+        let type = name.split("_")[0].split("/").pop();
         switch (type) {
             case "class":
-                return this.findClass(name)
+                return this.classes.get(name);
             case "method":
-                return this.findMethod(name)
+                return this.methods.get(name);
             case "field":
-                return this.findField(name)
+                return this.fields.get(name);
             default:
             //throw `Unsupported intermediary type ${type} for input ${name}`;
         }
     }
 
+    add(nameable: Map<string, Mapping>, mapping: Mapping) {
+        nameable.set(mapping.intermediary, mapping);
+    }
 }
 
 export function parseTiny(input : string) : Mappings {
@@ -79,20 +63,20 @@ export function parseTiny(input : string) : Mappings {
 
         switch (split[0]) {
             case "CLASS":
-                mappings.classes.push(new Mapping(split[namespace.intermediary + 1], split[namespace.named + 1]))
+                mappings.add(mappings.classes, new Mapping(split[namespace.intermediary + 1], split[namespace.named + 1]));
                 break
             case "FIELD":
-                mappings.fields.push(new Mapping(split[namespace.intermediary + 3], split[namespace.named + 3]))
+                mappings.add(mappings.fields, new Mapping(split[namespace.intermediary + 3], split[namespace.named + 3]));
                 break
             case "METHOD":
-                mappings.methods.push(new Mapping(split[namespace.intermediary + 3], split[namespace.named + 3]))
+                mappings.add(mappings.methods, new Mapping(split[namespace.intermediary + 3], split[namespace.named + 3]));
                 break
             default:
                 //Nope
         }
     })
 
-    console.log(`Loaded ${mappings.classes.length} classes, ${mappings.fields.length} fields, ${mappings.methods.length} methods`)
+    console.log(`Loaded ${mappings.classes.size} classes, ${mappings.fields.size} fields, ${mappings.methods.size} methods`)
 
     return mappings
 }
